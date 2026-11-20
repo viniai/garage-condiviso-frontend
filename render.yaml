@@ -1,0 +1,18 @@
+# Blueprint Render per il frontend (sito statico, gratuito).
+services:
+  - type: web
+    name: garage-app
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false   # es. https://api.tuonome.it
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
