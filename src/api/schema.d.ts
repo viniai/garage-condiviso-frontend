@@ -411,6 +411,92 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/profiles/{handle}/highlights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Highlights */
+        get: operations["list_highlights_v1_profiles__handle__highlights_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/highlights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Highlight */
+        post: operations["create_highlight_v1_highlights_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/highlights/{highlight_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Highlight */
+        delete: operations["delete_highlight_v1_highlights__highlight_id__delete"];
+        options?: never;
+        head?: never;
+        /** Rename Highlight */
+        patch: operations["rename_highlight_v1_highlights__highlight_id__patch"];
+        trace?: never;
+    };
+    "/v1/highlights/{highlight_id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Highlight Item */
+        post: operations["add_highlight_item_v1_highlights__highlight_id__items_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/highlight-items/{item_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Highlight Item */
+        delete: operations["delete_highlight_item_v1_highlight_items__item_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/profiles/{handle}/reviews": {
         parameters: {
             query?: never;
@@ -591,6 +677,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/contacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Contacts To Forward
+         * @description Messaggi per venditori senza account: vanno inoltrati a mano (concierge).
+         */
+        get: operations["contacts_to_forward_v1_admin_contacts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/contacts/{contact_id}/forwarded": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark Contact Forwarded */
+        post: operations["mark_contact_forwarded_v1_admin_contacts__contact_id__forwarded_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -620,6 +743,16 @@ export interface components {
             claim_token: string;
             /** Claim Url */
             claim_url: string;
+        };
+        /** Body_add_highlight_item_v1_highlights__highlight_id__items_post */
+        Body_add_highlight_item_v1_highlights__highlight_id__items_post: {
+            /** File */
+            file: string;
+            /**
+             * Caption
+             * @default
+             */
+            caption: string;
         };
         /** Body_add_photo_v1_entries__entry_id__photos_post */
         Body_add_photo_v1_entries__entry_id__photos_post: {
@@ -719,10 +852,78 @@ export interface components {
             /** Photos */
             photos: components["schemas"]["PhotoOut"][];
         };
+        /** ForwardingItemOut */
+        ForwardingItemOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Message */
+            message: string;
+            /** Part Title */
+            part_title: string;
+            /** Forwarded At */
+            forwarded_at: string | null;
+            sender: components["schemas"]["ForwardingSender"];
+            seller: components["schemas"]["SellerRef"];
+        };
+        /** ForwardingSender */
+        ForwardingSender: {
+            /** Handle */
+            handle: string;
+            /** Display Name */
+            display_name: string;
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** HighlightCreate */
+        HighlightCreate: {
+            /** Title */
+            title: string;
+        };
+        /** HighlightItemOut */
+        HighlightItemOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Url */
+            url: string;
+            /** Width */
+            width: number;
+            /** Height */
+            height: number;
+            /** Caption */
+            caption: string;
+        };
+        /** HighlightOut */
+        HighlightOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Title */
+            title: string;
+            /** Cover Url */
+            cover_url: string | null;
+            /** Items */
+            items: components["schemas"]["HighlightItemOut"][];
         };
         /** MagicLinkRequest */
         MagicLinkRequest: {
@@ -938,6 +1139,10 @@ export interface components {
             max_vehicles_per_user: number;
             /** Max Photos Per Vehicle */
             max_photos_per_vehicle: number;
+            /** Max Highlights Per Profile */
+            max_highlights_per_profile: number;
+            /** Max Items Per Highlight */
+            max_items_per_highlight: number;
             /** Reviews On Unclaimed */
             reviews_on_unclaimed: boolean;
         };
@@ -1969,6 +2174,198 @@ export interface operations {
             };
         };
     };
+    list_highlights_v1_profiles__handle__highlights_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                handle: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HighlightOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_highlight_v1_highlights_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HighlightCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HighlightOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_highlight_v1_highlights__highlight_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                highlight_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rename_highlight_v1_highlights__highlight_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                highlight_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HighlightCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HighlightOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_highlight_item_v1_highlights__highlight_id__items_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                highlight_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_add_highlight_item_v1_highlights__highlight_id__items_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HighlightItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_highlight_item_v1_highlight_items__item_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_reviews_v1_profiles__handle__reviews_get: {
         parameters: {
             query?: never;
@@ -2314,6 +2711,66 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ReportOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    contacts_to_forward_v1_admin_contacts_get: {
+        parameters: {
+            query?: {
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForwardingItemOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mark_contact_forwarded_v1_admin_contacts__contact_id__forwarded_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                contact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

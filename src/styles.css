@@ -1,27 +1,34 @@
 :root {
-  --bg: #f4f6f3;
+  /* Vicini di Box: blu notte, bianco, giallo ocra */
+  --bg: #f4f6fa;
   --surface: #ffffff;
-  --ink: #17211c;
-  --muted: #63706a;
-  --line: #dde3df;
-  --accent: #1f8a5b;
+  --ink: #0e1b3d;
+  --muted: #5a6685;
+  --line: #dce1ec;
+  --accent: #13285b;
   --accent-ink: #ffffff;
-  --accent-soft: #e2f3ea;
+  --accent-soft: #fbefcc;
+  --ocra: #d9a420;
+  --ocra-ink: #0e1b3d;
+  --ok: #1f7a4d;
   --danger: #c0392b;
   --radius: 14px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 8%), 0 4px 16px rgb(0 0 0 / 6%);
+  --shadow: 0 1px 2px rgb(14 27 61 / 8%), 0 4px 16px rgb(14 27 61 / 6%);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #101512;
-    --surface: #18201b;
-    --ink: #e8efea;
-    --muted: #93a39a;
-    --line: #2a352e;
-    --accent: #3fb683;
-    --accent-ink: #08130d;
-    --accent-soft: #19332a;
+    --bg: #0a1128;
+    --surface: #111b3a;
+    --ink: #eef1fa;
+    --muted: #9aa6c7;
+    --line: #223056;
+    --accent: #e2ae2f;
+    --accent-ink: #0a1128;
+    --accent-soft: #2e2810;
+    --ocra: #e2ae2f;
+    --ocra-ink: #0a1128;
+    --ok: #55c28b;
     --danger: #ef7b6e;
     --shadow: 0 1px 2px rgb(0 0 0 / 40%);
     color-scheme: dark;
@@ -51,14 +58,14 @@ h2 { font-size: 1.05rem; margin: 1.25rem 0 .5rem; }
   text-align: center; padding: 10px 4px; text-decoration: none; color: var(--muted);
   font-size: .78rem; font-weight: 600;
 }
-.tabbar a.active { color: var(--accent); }
+.tabbar a.active { color: var(--accent); box-shadow: inset 0 3px 0 var(--ocra); }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); margin-bottom: 12px; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .row.between { justify-content: space-between; }
 .stack > * + * { margin-top: 10px; }
 .muted { color: var(--muted); font-size: .88rem; }
 .error { color: var(--danger); font-size: .9rem; }
-.ok { color: var(--accent); font-size: .9rem; }
+.ok { color: var(--ok); font-size: .9rem; }
 label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 4px; }
 input, select, textarea {
   width: 100%; font: inherit; color: inherit; background: var(--bg);
@@ -76,9 +83,9 @@ button.primary, .btn.primary { background: var(--accent); color: var(--accent-in
 button.danger { color: var(--danger); }
 button:disabled { opacity: .5; cursor: not-allowed; }
 .chip { border-radius: 999px; padding: 6px 12px; font-size: .82rem; white-space: nowrap; }
-.chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.chip.on { background: var(--accent-soft); border-color: var(--ocra); color: var(--ink); font-weight: 700; }
 .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
-.badge { font-size: .72rem; font-weight: 700; background: var(--accent-soft); color: var(--accent); border-radius: 6px; padding: 2px 7px; }
+.badge { font-size: .72rem; font-weight: 700; background: var(--ocra); color: var(--ocra-ink); border-radius: 6px; padding: 2px 7px; }
 .map-wrap { position: relative; flex: 1 1 55%; min-height: 260px; }
 .map-wrap .leaflet-container { height: 100%; width: 100%; z-index: 0; }
 .map-top { position: absolute; z-index: 500; top: 10px; left: 10px; right: 10px; display: grid; gap: 6px; }
@@ -91,5 +98,32 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; }
 .stars { color: #d69e2e; letter-spacing: 2px; }
 .bar { height: 8px; background: var(--line); border-radius: 8px; overflow: hidden; }
-.bar > i { display: block; height: 100%; background: var(--accent); }
+.bar > i { display: block; height: 100%; background: var(--ocra); }
 .tabs { display: flex; gap: 6px; margin: 12px 0; }
+
+/* In evidenza (stile storie) */
+.hl-row { display: flex; gap: 14px; overflow-x: auto; padding: 6px 2px 10px; }
+.hl-item { background: none; border: 0; padding: 0; width: 76px; flex: none; text-align: center; color: var(--ink); }
+.hl-ring {
+  display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%;
+  border: 3px solid var(--ocra); padding: 3px; background: var(--surface); overflow: hidden; margin: 0 auto;
+}
+.hl-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.hl-empty { font-weight: 800; font-size: 1.4rem; color: var(--muted); }
+.hl-add { font-size: 2rem; font-weight: 300; color: var(--muted); border-style: dashed; border-color: var(--line); }
+.hl-title { display: block; font-size: .75rem; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.story { position: fixed; inset: 0; z-index: 2000; background: #050a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
+.story-bars { position: absolute; top: max(10px, env(safe-area-inset-top)); left: 10px; right: 10px; display: flex; gap: 4px; z-index: 3; }
+.story-bars span { flex: 1; height: 3px; background: rgb(255 255 255 / 30%); border-radius: 3px; overflow: hidden; position: relative; }
+.story-bars span.done { background: var(--ocra); }
+.story-bars span.active::after { content: ""; position: absolute; inset: 0; background: var(--ocra); transform-origin: left; animation: story-fill 5s linear forwards; }
+@keyframes story-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.story-head { position: absolute; top: calc(max(10px, env(safe-area-inset-top)) + 14px); left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 3; }
+.story-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.story-caption { position: absolute; bottom: max(24px, env(safe-area-inset-bottom)); left: 16px; right: 16px; text-align: center; background: rgb(5 10 26 / 65%); padding: 10px 12px; border-radius: 10px; margin: 0; z-index: 3; }
+.story-zone { position: absolute; top: 60px; bottom: 80px; width: 40%; background: transparent; border: 0; z-index: 2; }
+.story-zone.left { left: 0; }
+.story-zone.right { right: 0; }
+.story-close, .story-btn { background: rgb(255 255 255 / 15%); color: #fff; border: 0; border-radius: 999px; padding: 6px 12px; }
+.story-empty { margin: 0; }
+@media (prefers-reduced-motion: reduce) { .story-bars span.active::after { animation: none; transform: scaleX(1); } }

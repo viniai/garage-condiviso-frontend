@@ -1,6 +1,6 @@
 import { formatEuro, type PhaseTotal } from "../lib/budget";
 
-const COLORS = ["#1f8a5b", "#2b6cb0", "#c05621", "#6b46c1", "#b7791f", "#4a5568"];
+const COLORS = ["#3b63c4", "#d9a420", "#7c93d1", "#a67c14", "#5b6b99", "#e8c872"];
 
 /** Ciambella SVG delle spese per fase. Solo dati locali. */
 export default function Donut({ data }: { data: PhaseTotal[] }) {

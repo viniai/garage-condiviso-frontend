@@ -19,7 +19,7 @@ export default function ClaimPage() {
     return (
       <Page>
         <h1>Riscatta il tuo profilo</h1>
-        <p>Qualcuno ha già preparato per te una vetrina su Garage Condiviso. Accedi per renderla tua.</p>
+        <p>Qualcuno ha già preparato per te una vetrina su Vicini di Box. Accedi per renderla tua.</p>
         <LoginPrompt next={`/claim?token=${encodeURIComponent(token)}`} message="Accedi con l'email che vuoi associare al profilo." />
       </Page>
     );

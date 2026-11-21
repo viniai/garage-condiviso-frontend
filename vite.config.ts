@@ -8,12 +8,12 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "Garage Condiviso",
-        short_name: "Garage",
-        description: "Mappa dei pezzi d'epoca e diari di restauro",
+        name: "Vicini di Box",
+        short_name: "Vicini di Box",
+        description: "La rete degli appassionati: pezzi d'epoca da parte e diari di restauro",
         lang: "it",
-        theme_color: "#1f8a5b",
-        background_color: "#f6f7f5",
+        theme_color: "#13285b",
+        background_color: "#ffffff",
         display: "standalone",
         start_url: "/",
         icons: [

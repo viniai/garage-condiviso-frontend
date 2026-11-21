@@ -66,7 +66,7 @@ function BackupPanel() {
     const url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `garage-condiviso-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `vicini-di-box-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
     setStatus("Backup scaricato");

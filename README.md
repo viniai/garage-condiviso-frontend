@@ -1,4 +1,4 @@
-# Garage Condiviso — Frontend
+# Vicini di Box — Frontend
 
 PWA React + TypeScript (Vite) per la mappa dei pezzi "da parte", i diari di restauro e i profili.
 

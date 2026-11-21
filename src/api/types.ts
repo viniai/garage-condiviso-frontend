@@ -12,6 +12,9 @@ export type Review = S["ReviewOut"];
 export type ReviewList = S["ReviewList"];
 export type Report = S["ReportOut"];
 export type PublicConfig = S["PublicConfig"];
+export type ForwardingItem = S["ForwardingItemOut"];
+export type Highlight = S["HighlightOut"];
+export type HighlightItem = S["HighlightItemOut"];
 export type Category = S["PartCreate"]["category"];
 
 export const CATEGORIES: { value: Category; label: string }[] = [
@@ -23,9 +26,9 @@ export const CATEGORIES: { value: Category; label: string }[] = [
 ];
 
 export const CATEGORY_COLORS: Record<string, string> = {
-  body: "#2b6cb0",
+  body: "#2f5bb7",
   engine: "#c05621",
-  light: "#b7791f",
+  light: "#d9a420",
   interior: "#6b46c1",
-  other: "#4a5568",
+  other: "#64748b",
 };

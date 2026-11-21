@@ -4,7 +4,61 @@ import { api } from "../api/endpoints";
 import { CATEGORIES, type Category } from "../api/types";
 import { useSession } from "../auth/session";
 import { ErrorNote, Page } from "../components/ui";
+import { forwardingText } from "../lib/forwarding";
 import { useAsync } from "../lib/useAsync";
+import type { ForwardingItem } from "../api/types";
+
+function ForwardingCard({ item, token, onDone }: { item: ForwardingItem; token: string; onDone: () => void }) {
+  const [claimUrl, setClaimUrl] = useState<string>();
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<unknown>();
+
+  async function newClaimLink() {
+    try {
+      setClaimUrl((await api.admin.reissueClaim(token, item.seller.id)).claim_url);
+      setError(undefined);
+    } catch (err) {
+      setError(err);
+    }
+  }
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(forwardingText(item, claimUrl));
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  }
+  async function done() {
+    try {
+      await api.admin.markForwarded(token, item.id);
+      onDone();
+    } catch (err) {
+      setError(err);
+    }
+  }
+
+  return (
+    <div className="card stack">
+      <div className="row between">
+        <strong>{item.part_title}</strong>
+        <span className="muted">{new Date(item.created_at).toLocaleString("it-IT")}</span>
+      </div>
+      <div className="muted">
+        Per <strong>{item.seller.display_name}</strong> (@{item.seller.handle},{" "}
+        {item.seller.status === "unclaimed" ? "non riscattato" : "ora riscattato"}) · da {item.sender.display_name} ({item.sender.email})
+      </div>
+      <p>{item.message}</p>
+      {claimUrl ? <input readOnly value={claimUrl} aria-label="Link di riscatto" onFocus={(e) => e.currentTarget.select()} /> : null}
+      <ErrorNote error={error} />
+      <div className="row">
+        <button onClick={() => void copy()}>{copied ? "Copiato" : "Copia testo da inoltrare"}</button>
+        {item.seller.status === "unclaimed" ? <button onClick={() => void newClaimLink()}>Nuovo link di riscatto</button> : null}
+        <button className="primary" onClick={() => void done()}>Segna come inoltrato</button>
+      </div>
+    </div>
+  );
+}
 
 /** Strumenti del concierge seeding: crea profili riscattabili, carica i loro pezzi, modera. */
 export default function AdminPage() {
@@ -13,6 +67,8 @@ export default function AdminPage() {
   const [created, setCreated] = useState<{ id: string; handle: string; claimUrl: string }>();
   const [copied, setCopied] = useState(false);
   const reports = useAsync(() => (token && me?.is_admin ? api.admin.reports(token) : Promise.resolve([])), [token, me?.is_admin]);
+
+  const toForward = useAsync(() => (token && me?.is_admin ? api.admin.contactsToForward(token) : Promise.resolve([])), [token, me?.is_admin]);
 
   if (!me?.is_admin) return <Page><h1>Riservato</h1><p><Link to="/">Torna alla mappa</Link></p></Page>;
 
@@ -102,6 +158,14 @@ export default function AdminPage() {
           </form>
         </>
       ) : null}
+
+      <h2>Messaggi da inoltrare</h2>
+      <p className="muted">Messaggi inviati a profili senza account: nessuna email è partita, scrivi tu al venditore.</p>
+      <ErrorNote error={toForward.error} />
+      {(toForward.data ?? []).map((i) => (
+        <ForwardingCard key={i.id} item={i} token={token as string} onDone={toForward.reload} />
+      ))}
+      {toForward.data?.length === 0 ? <p className="muted">Nessun messaggio in attesa.</p> : null}
 
       <h2>Segnalazioni aperte</h2>
       {(reports.data ?? []).map((r) => (

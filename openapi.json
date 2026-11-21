@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Garage Condiviso API",
+    "title": "Vicini di Box API",
     "description": "Mappa dei pezzi, diari di restauro, profili claimable e recensioni. I dati privati (spese, targhe, bozze) NON passano da questa API.",
     "version": "0.1.0"
   },
@@ -1296,6 +1296,294 @@
         }
       }
     },
+    "/v1/profiles/{handle}/highlights": {
+      "get": {
+        "tags": [
+          "in evidenza"
+        ],
+        "summary": "List Highlights",
+        "operationId": "list_highlights_v1_profiles__handle__highlights_get",
+        "parameters": [
+          {
+            "name": "handle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Handle"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HighlightOut"
+                  },
+                  "title": "Response List Highlights V1 Profiles  Handle  Highlights Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/highlights": {
+      "post": {
+        "tags": [
+          "in evidenza"
+        ],
+        "summary": "Create Highlight",
+        "operationId": "create_highlight_v1_highlights_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HighlightCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HighlightOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/highlights/{highlight_id}": {
+      "patch": {
+        "tags": [
+          "in evidenza"
+        ],
+        "summary": "Rename Highlight",
+        "operationId": "rename_highlight_v1_highlights__highlight_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "highlight_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Highlight Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HighlightCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HighlightOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "in evidenza"
+        ],
+        "summary": "Delete Highlight",
+        "operationId": "delete_highlight_v1_highlights__highlight_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "highlight_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Highlight Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/highlights/{highlight_id}/items": {
+      "post": {
+        "tags": [
+          "in evidenza"
+        ],
+        "summary": "Add Highlight Item",
+        "operationId": "add_highlight_item_v1_highlights__highlight_id__items_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "highlight_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Highlight Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_add_highlight_item_v1_highlights__highlight_id__items_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HighlightItemOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/highlight-items/{item_id}": {
+      "delete": {
+        "tags": [
+          "in evidenza"
+        ],
+        "summary": "Delete Highlight Item",
+        "operationId": "delete_highlight_item_v1_highlight_items__item_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/profiles/{handle}/reviews": {
       "post": {
         "tags": [
@@ -1844,6 +2132,101 @@
           }
         }
       }
+    },
+    "/v1/admin/contacts": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Contacts To Forward",
+        "description": "Messaggi per venditori senza account: vanno inoltrati a mano (concierge).",
+        "operationId": "contacts_to_forward_v1_admin_contacts_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(pending|forwarded)$",
+              "default": "pending",
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForwardingItemOut"
+                  },
+                  "title": "Response Contacts To Forward V1 Admin Contacts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/contacts/{contact_id}/forwarded": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Mark Contact Forwarded",
+        "operationId": "mark_contact_forwarded_v1_admin_contacts__contact_id__forwarded_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Contact Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1918,6 +2301,26 @@
           "claim_url"
         ],
         "title": "AdminProfileCreated"
+      },
+      "Body_add_highlight_item_v1_highlights__highlight_id__items_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          },
+          "caption": {
+            "type": "string",
+            "maxLength": 200,
+            "title": "Caption",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_add_highlight_item_v1_highlights__highlight_id__items_post"
       },
       "Body_add_photo_v1_entries__entry_id__photos_post": {
         "properties": {
@@ -2105,6 +2508,81 @@
         ],
         "title": "EntryOut"
       },
+      "ForwardingItemOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "part_title": {
+            "type": "string",
+            "title": "Part Title"
+          },
+          "forwarded_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forwarded At"
+          },
+          "sender": {
+            "$ref": "#/components/schemas/ForwardingSender"
+          },
+          "seller": {
+            "$ref": "#/components/schemas/SellerRef"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "message",
+          "part_title",
+          "forwarded_at",
+          "sender",
+          "seller"
+        ],
+        "title": "ForwardingItemOut"
+      },
+      "ForwardingSender": {
+        "properties": {
+          "handle": {
+            "type": "string",
+            "title": "Handle"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "handle",
+          "display_name",
+          "email"
+        ],
+        "title": "ForwardingSender"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -2117,6 +2595,94 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "HighlightCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "title": "HighlightCreate"
+      },
+      "HighlightItemOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "width": {
+            "type": "integer",
+            "title": "Width"
+          },
+          "height": {
+            "type": "integer",
+            "title": "Height"
+          },
+          "caption": {
+            "type": "string",
+            "title": "Caption"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "url",
+          "width",
+          "height",
+          "caption"
+        ],
+        "title": "HighlightItemOut"
+      },
+      "HighlightOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "cover_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HighlightItemOut"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "cover_url",
+          "items"
+        ],
+        "title": "HighlightOut"
       },
       "MagicLinkRequest": {
         "properties": {
@@ -2711,6 +3277,14 @@
             "type": "integer",
             "title": "Max Photos Per Vehicle"
           },
+          "max_highlights_per_profile": {
+            "type": "integer",
+            "title": "Max Highlights Per Profile"
+          },
+          "max_items_per_highlight": {
+            "type": "integer",
+            "title": "Max Items Per Highlight"
+          },
           "reviews_on_unclaimed": {
             "type": "boolean",
             "title": "Reviews On Unclaimed"
@@ -2720,6 +3294,8 @@
         "required": [
           "max_vehicles_per_user",
           "max_photos_per_vehicle",
+          "max_highlights_per_profile",
+          "max_items_per_highlight",
           "reviews_on_unclaimed"
         ],
         "title": "PublicConfig"

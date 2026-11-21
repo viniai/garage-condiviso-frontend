@@ -4,6 +4,7 @@ import { mediaUrl } from "../api/client";
 import { api } from "../api/endpoints";
 import { CATEGORIES, type Review } from "../api/types";
 import { useSession } from "../auth/session";
+import HighlightsRow from "../components/HighlightsRow";
 import { ErrorNote, Page, Stars } from "../components/ui";
 import { useAsync } from "../lib/useAsync";
 
@@ -120,6 +121,7 @@ export default function PublicProfilePage() {
         {p.rating_average != null ? <> · <Stars value={Math.round(p.rating_average)} /> {p.rating_average} ({p.rating_count})</> : null}
         {p.status === "unclaimed" ? " · profilo non ancora riscattato" : ""}</p>
       {p.bio ? <p>{p.bio}</p> : null}
+      <HighlightsRow handle={handle} isOwner={isOwner} />
       <div className="tabs" role="tablist">
         {([["showcase", "Vetrina"], ["diaries", "Diari"], ["reviews", "Recensioni"]] as const).map(([key, label]) => (
           <button key={key} role="tab" aria-selected={tab === key} className={`chip ${tab === key ? "on" : ""}`} onClick={() => setTab(key)}>{label}</button>

@@ -5,6 +5,8 @@
  */
 import type { GarageDB, LocalExpense, LocalVehicle } from "./db";
 
+// L'identificativo "garage-condiviso" è il vecchio nome del progetto: resta invariato per
+// non invalidare i backup già esportati (e il nome del database locale nel browser).
 export const BACKUP_VERSION = 1;
 
 export interface BackupFile {

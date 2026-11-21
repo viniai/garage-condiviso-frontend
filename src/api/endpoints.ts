@@ -1,6 +1,9 @@
 import { request } from "./client";
 import type {
   DiaryEntry,
+  ForwardingItem,
+  Highlight,
+  HighlightItem,
   Me,
   Part,
   PartCreate,
@@ -67,6 +70,19 @@ export const api = {
     return request<{ id: string; url: string }>("POST", `/v1/entries/${entryId}/photos`, { token, form });
   },
 
+  highlights: (handle: string) => request<Highlight[]>("GET", `/v1/profiles/${handle}/highlights`),
+  createHighlight: (token: string, title: string) =>
+    request<Highlight>("POST", "/v1/highlights", { token, json: { title } }),
+  deleteHighlight: (token: string, id: string) => request<void>("DELETE", `/v1/highlights/${id}`, { token }),
+  addHighlightItem: (token: string, highlightId: string, file: Blob, caption: string) => {
+    const form = new FormData();
+    form.append("file", file, "photo.webp");
+    form.append("caption", caption);
+    return request<HighlightItem>("POST", `/v1/highlights/${highlightId}/items`, { token, form });
+  },
+  deleteHighlightItem: (token: string, id: string) =>
+    request<void>("DELETE", `/v1/highlight-items/${id}`, { token }),
+
   reviews: (handle: string) => request<ReviewList>("GET", `/v1/profiles/${handle}/reviews`),
   createReview: (token: string, handle: string, body: { rating: number; text: string }) =>
     request<Review>("POST", `/v1/profiles/${handle}/reviews`, { token, json: body }),
@@ -88,6 +104,12 @@ export const api = {
       }),
     addPart: (token: string, profileId: string, body: PartCreate) =>
       request<Part>("POST", `/v1/admin/profiles/${profileId}/parts`, { token, json: body }),
+    contactsToForward: (token: string, status: "pending" | "forwarded" = "pending") =>
+      request<ForwardingItem[]>("GET", "/v1/admin/contacts", { token, query: { status } }),
+    markForwarded: (token: string, id: string) =>
+      request<void>("POST", `/v1/admin/contacts/${id}/forwarded`, { token }),
+    reissueClaim: (token: string, profileId: string) =>
+      request<{ claim_token: string; claim_url: string }>("POST", `/v1/admin/profiles/${profileId}/claim-token`, { token }),
     reports: (token: string) => request<Report[]>("GET", "/v1/admin/reports", { token }),
     resolveReport: (token: string, id: string, action: "dismiss" | "remove") =>
       request<Report>("POST", `/v1/admin/reports/${id}/resolve`, { token, json: { action } }),
