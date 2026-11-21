@@ -5,6 +5,7 @@ import { api } from "../api/endpoints";
 import { CATEGORIES, type Review } from "../api/types";
 import { useSession } from "../auth/session";
 import HighlightsRow from "../components/HighlightsRow";
+import ReportMenu from "../components/ReportMenu";
 import { ErrorNote, Page, Stars } from "../components/ui";
 import { useAsync } from "../lib/useAsync";
 
@@ -24,7 +25,7 @@ function Diaries({ handle }: { handle: string }) {
           <h2>{vehicle.title} <span className="muted">· {vehicle.make} {vehicle.model} {vehicle.year}</span></h2>
           {items.map((e) => (
             <div key={e.id} className="card stack">
-              <div className="row between"><strong>{e.title}</strong><span className="muted">{e.occurred_on}</span></div>
+              <div className="row between"><strong>{e.title}</strong><span className="row"><span className="muted mono">{e.occurred_on}</span><ReportMenu targetType="entry" targetId={e.id} label="questo aggiornamento" /></span></div>
               {e.body ? <p>{e.body}</p> : null}
               {e.photos.length ? <div className="photos">{e.photos.map((p) => <img key={p.id} src={mediaUrl(p.url)} alt="" loading="lazy" />)}</div> : null}
             </div>
@@ -69,7 +70,6 @@ function ReviewItem({ review, isOwner, onChange }: { review: Review; isOwner: bo
   const { token } = useSession();
   const [reply, setReply] = useState("");
   const [error, setError] = useState<unknown>();
-  const [reported, setReported] = useState(false);
 
   async function send() {
     try {
@@ -79,23 +79,14 @@ function ReviewItem({ review, isOwner, onChange }: { review: Review; isOwner: bo
       setError(err);
     }
   }
-  async function report() {
-    try {
-      await api.report(token as string, { target_type: "review", target_id: review.id, reason: "other" });
-      setReported(true);
-    } catch (err) {
-      setError(err);
-    }
-  }
   return (
     <div className="card stack">
-      <div className="row between"><Stars value={review.rating} /><span className="muted">{review.reviewer.display_name}</span></div>
+      <div className="row between"><Stars value={review.rating} /><span className="row"><span className="muted">{review.reviewer.display_name}</span><ReportMenu targetType="review" targetId={review.id} label="questa recensione" /></span></div>
       {review.text ? <p>{review.text}</p> : null}
       {review.reply ? <p className="muted">Risposta: {review.reply}</p> : null}
       {isOwner && !review.reply ? (
         <div className="row"><input aria-label="Risposta" value={reply} onChange={(e) => setReply(e.target.value)} style={{ flex: 1 }} /><button onClick={() => void send()} disabled={!reply.trim()}>Rispondi</button></div>
       ) : null}
-      {token ? (reported ? <span className="muted">Segnalata</span> : <button className="muted" onClick={() => void report()}>Segnala</button>) : null}
       <ErrorNote error={error} />
     </div>
   );
@@ -116,7 +107,7 @@ export default function PublicProfilePage() {
 
   return (
     <Page>
-      <h1>{p.display_name}</h1>
+      <div className="row between"><h1>{p.display_name}</h1>{!isOwner ? <ReportMenu targetType="profile" targetId={p.id} label="questo profilo" /> : null}</div>
       <p className="muted">@{p.handle} · {p.municipality}
         {p.rating_average != null ? <> · <Stars value={Math.round(p.rating_average)} /> {p.rating_average} ({p.rating_count})</> : null}
         {p.status === "unclaimed" ? " · profilo non ancora riscattato" : ""}</p>
@@ -131,7 +122,7 @@ export default function PublicProfilePage() {
         <>
           {(parts.data ?? []).map((x) => (
             <div key={x.id} className="card">
-              <strong>{x.title}</strong>
+              <div className="row between"><strong>{x.title}</strong>{!isOwner ? <ReportMenu targetType="part" targetId={x.id} label="questo annuncio" /> : null}</div>
               <div className="muted">{x.make} {x.model} · {CATEGORIES.find((c) => c.value === x.category)?.label}</div>
               {x.description ? <p>{x.description}</p> : null}
             </div>

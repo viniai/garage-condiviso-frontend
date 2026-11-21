@@ -23,6 +23,8 @@ export const api = {
   requestMagicLink: (email: string) => request<void>("POST", "/v1/auth/magic-link", { json: { email } }),
   verify: (token: string) =>
     request<{ access_token: string }>("POST", "/v1/auth/verify", { json: { token } }),
+  googleLogin: (credential: string) =>
+    request<{ access_token: string }>("POST", "/v1/auth/google", { json: { credential } }),
   me: (token: string) => request<Me>("GET", "/v1/me", { token }),
   deleteAccount: (token: string) => request<void>("DELETE", "/v1/me", { token }),
 

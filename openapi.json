@@ -134,6 +134,47 @@
         }
       }
     },
+    "/v1/auth/google": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Google Login",
+        "operationId": "google_login_v1_auth_google_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/me": {
       "get": {
         "tags": [
@@ -2583,6 +2624,21 @@
         ],
         "title": "ForwardingSender"
       },
+      "GoogleLoginRequest": {
+        "properties": {
+          "credential": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 20,
+            "title": "Credential"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credential"
+        ],
+        "title": "GoogleLoginRequest"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -3288,6 +3344,17 @@
           "reviews_on_unclaimed": {
             "type": "boolean",
             "title": "Reviews On Unclaimed"
+          },
+          "google_client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Google Client Id"
           }
         },
         "type": "object",
