@@ -2,7 +2,7 @@ import { type FormEvent, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { api } from "../api/endpoints";
 import { rememberNext } from "../auth/session";
-import { ErrorNote, Page } from "../components/ui";
+import { Brand, ErrorNote, Page } from "../components/ui";
 
 export default function LoginPage() {
   const location = useLocation();
@@ -29,7 +29,8 @@ export default function LoginPage() {
 
   return (
     <Page>
-      <h1>Accedi a Vicini di Box</h1>
+      <Brand />
+      <h1>Accedi</h1>
       <p className="muted">Niente password: ti inviamo un link di accesso monouso via email.</p>
       {sent ? (
         <div className="card">

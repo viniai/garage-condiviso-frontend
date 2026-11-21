@@ -26,9 +26,9 @@ export const CATEGORIES: { value: Category; label: string }[] = [
 ];
 
 export const CATEGORY_COLORS: Record<string, string> = {
-  body: "#2f5bb7",
+  body: "#3a6ea5",
   engine: "#c05621",
-  light: "#d9a420",
+  light: "#e5a93c",
   interior: "#6b46c1",
   other: "#64748b",
 };

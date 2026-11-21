@@ -38,3 +38,12 @@ export function LoginPrompt({ next, message }: { next: string; message: string }
     </div>
   );
 }
+
+export function Brand() {
+  return (
+    <div className="brand">
+      <img src="/logo-pin.png" alt="" />
+      <span>Vicini<b>Di</b>Box</span>
+    </div>
+  );
+}

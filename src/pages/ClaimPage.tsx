@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../api/endpoints";
 import { useSession } from "../auth/session";
-import { ErrorNote, LoginPrompt, Page } from "../components/ui";
+import { Brand, ErrorNote, LoginPrompt, Page } from "../components/ui";
 
 /** Riscatto di un profilo creato dall'admin (concierge seeding): /claim?token=... */
 export default function ClaimPage() {
@@ -18,6 +18,7 @@ export default function ClaimPage() {
   if (!session) {
     return (
       <Page>
+        <Brand />
         <h1>Riscatta il tuo profilo</h1>
         <p>Qualcuno ha già preparato per te una vetrina su Vicini di Box. Accedi per renderla tua.</p>
         <LoginPrompt next={`/claim?token=${encodeURIComponent(token)}`} message="Accedi con l'email che vuoi associare al profilo." />

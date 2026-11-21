@@ -12,8 +12,8 @@ export default defineConfig({
         short_name: "Vicini di Box",
         description: "La rete degli appassionati: pezzi d'epoca da parte e diari di restauro",
         lang: "it",
-        theme_color: "#13285b",
-        background_color: "#ffffff",
+        theme_color: "#141619",
+        background_color: "#f5f4ef",
         display: "standalone",
         start_url: "/",
         icons: [
