@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../api/endpoints";
 import { useSession } from "../auth/session";
-import { Brand, ErrorNote, LoginPrompt, Page } from "../components/ui";
+import { Brand, ConsentCheck, ErrorNote, LoginPrompt, Page } from "../components/ui";
 
 /** Riscatto di un profilo creato dall'admin (concierge seeding): /claim?token=... */
 export default function ClaimPage() {
@@ -12,6 +12,7 @@ export default function ClaimPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<unknown>();
   const [busy, setBusy] = useState(false);
+  const [consent, setConsent] = useState(false);
 
   if (!token) return <Page><h1>Link non valido</h1></Page>;
   if (loading) return <Page><p className="muted">Caricamento…</p></Page>;
@@ -53,8 +54,9 @@ export default function ClaimPage() {
       <h1>Riscatta il tuo profilo</h1>
       <div className="card stack">
         <p>Il profilo e i pezzi in vetrina diventeranno tuoi: potrai modificarli, nasconderli o eliminarli.</p>
+        <ConsentCheck checked={consent} onChange={setConsent} />
         <ErrorNote error={error} />
-        <button className="primary" onClick={claim} disabled={busy}>Riscatta profilo</button>
+        <button className="primary" onClick={claim} disabled={busy || !consent}>Riscatta profilo</button>
       </div>
     </Page>
   );

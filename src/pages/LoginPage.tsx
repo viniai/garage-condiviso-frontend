@@ -1,5 +1,5 @@
 import { type FormEvent, useCallback, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../api/endpoints";
 import { rememberNext, takeNext, useSession } from "../auth/session";
 import GoogleButton from "../components/GoogleButton";
@@ -75,6 +75,9 @@ export default function LoginPage() {
           <button className="primary" disabled={busy}>Inviami il link</button>
         </form>
       )}
+      <p className="muted legal-note">
+        Continuando accetti i <Link to="/termini">termini d'uso</Link> e l'<Link to="/privacy">informativa privacy</Link>. Il consenso viene registrato quando crei il profilo.
+      </p>
     </Page>
   );
 }

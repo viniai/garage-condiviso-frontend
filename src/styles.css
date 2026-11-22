@@ -157,3 +157,14 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .kebab-menu button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 8px 10px; }
 .modal-back { position: fixed; inset: 0; z-index: 3000; background: rgb(0 0 0 / 50%); display: flex; align-items: center; justify-content: center; padding: 16px; }
 .modal { width: 100%; max-width: 420px; margin: 0; }
+.legal-note { margin-top: 18px; font-size: .8rem; }
+.consent { align-items: flex-start; font-size: .85rem; font-weight: 400; }
+.consent input { margin-top: 3px; }
+
+.part-photos { display: flex; gap: 8px; overflow-x: auto; }
+.part-photos img { height: 120px; width: auto; max-width: 70%; border-radius: 10px; object-fit: cover; flex: none; }
+.part-photo-edit { position: relative; flex: none; }
+.part-photo-edit img { height: 96px; }
+.part-photo-edit button { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; padding: 0; border-radius: 50%; line-height: 1; }
+.part-photo-add { height: 96px; min-width: 80px; border: 2px dashed var(--line); background: none; border-radius: 10px; flex: none; }
+.part-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; float: left; margin-right: 10px; }

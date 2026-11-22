@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { api } from "../api/endpoints";
 import { CATEGORIES, type Category } from "../api/types";
 import { useSession } from "../auth/session";
+import { MAX_PART_PHOTOS } from "../components/PartPhotos";
+import { resizeImage } from "../lib/image";
+import { parsePrice } from "../lib/money";
 import { ErrorNote, Page } from "../components/ui";
 import { forwardingText } from "../lib/forwarding";
 import { useAsync } from "../lib/useAsync";
@@ -95,8 +98,12 @@ export default function AdminPage() {
     if (!created) return;
     const form = e.currentTarget;
     const f = new FormData(form);
+    const price = parsePrice(String(f.get("price")));
+    if (price === undefined) return setError(new Error("Prezzo non valido (es. 120 o 85,50)"));
+    const files = Array.from((form.elements.namedItem("photos") as HTMLInputElement).files ?? []).slice(0, MAX_PART_PHOTOS);
     try {
-      await api.admin.addPart(token as string, created.id, {
+      const part = await api.admin.addPart(token as string, created.id, {
+        price_cents: price,
         title: String(f.get("title")).trim(),
         category: String(f.get("category")) as Category,
         make: String(f.get("make")).trim(),
@@ -104,6 +111,7 @@ export default function AdminPage() {
         description: "",
         is_visible: true,
       });
+      for (const file of files) await api.uploadPartPhoto(token as string, part.id, await resizeImage(file));
       form.reset();
       setError(undefined);
     } catch (err) {
@@ -153,6 +161,10 @@ export default function AdminPage() {
               <input name="make" placeholder="Marca" required style={{ flex: 1 }} aria-label="Marca" />
               <input name="model" placeholder="Modello" style={{ flex: 1 }} aria-label="Modello" />
               <select name="category" aria-label="Categoria">{CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}</select>
+            </div>
+            <div className="row">
+              <input name="price" inputMode="decimal" placeholder="Prezzo € (vuoto = su richiesta)" aria-label="Prezzo" style={{ flex: 1 }} />
+              <input name="photos" type="file" accept="image/*" multiple aria-label={`Foto (max ${MAX_PART_PHOTOS})`} style={{ flex: 1 }} />
             </div>
             <button>Aggiungi</button>
           </form>

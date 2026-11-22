@@ -47,3 +47,14 @@ export function Brand() {
     </div>
   );
 }
+
+export function ConsentCheck({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="check consent">
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+      <span>
+        Ho letto e accetto i <Link to="/termini" target="_blank">termini d'uso</Link> e l'<Link to="/privacy" target="_blank">informativa privacy</Link>. Confermo di essere maggiorenne.
+      </span>
+    </label>
+  );
+}

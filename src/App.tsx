@@ -5,9 +5,11 @@ import ClaimPage from "./pages/ClaimPage";
 import DaPartePage from "./pages/DaPartePage";
 import LoginPage from "./pages/LoginPage";
 import MapPage from "./pages/MapPage";
+import PrivacyPage from "./pages/PrivacyPage";
 import ProfilePage from "./pages/ProfilePage";
 import PublicProfilePage from "./pages/PublicProfilePage";
 import RestauroPage from "./pages/RestauroPage";
+import TermsPage from "./pages/TermsPage";
 import VehicleDiaryPage from "./pages/VehicleDiaryPage";
 import VerifyPage from "./pages/VerifyPage";
 
@@ -41,6 +43,8 @@ export default function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="auth/verify" element={<VerifyPage />} />
             <Route path="claim" element={<ClaimPage />} />
+            <Route path="privacy" element={<PrivacyPage />} />
+            <Route path="termini" element={<TermsPage />} />
             <Route path="admin" element={<AdminPage />} />
           </Route>
         </Routes>

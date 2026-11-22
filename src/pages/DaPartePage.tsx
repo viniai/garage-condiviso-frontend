@@ -4,6 +4,9 @@ import { api } from "../api/endpoints";
 import { CATEGORIES, type Category } from "../api/types";
 import { useSession } from "../auth/session";
 import { ErrorNote, LoginPrompt, Page } from "../components/ui";
+import { MAX_PART_PHOTOS, PartPhotoManager } from "../components/PartPhotos";
+import { resizeImage } from "../lib/image";
+import { formatPrice, parsePrice } from "../lib/money";
 import { useAsync } from "../lib/useAsync";
 
 export default function DaPartePage() {
@@ -19,8 +22,12 @@ export default function DaPartePage() {
   async function create(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
+    const price = parsePrice(String(f.get("price")));
+    if (price === undefined) return setError(new Error("Prezzo non valido: scrivi un importo in euro, per esempio 120 o 85,50"));
+    const files = Array.from((e.currentTarget.elements.namedItem("photos") as HTMLInputElement).files ?? []).slice(0, MAX_PART_PHOTOS);
     try {
-      await api.createPart(token as string, {
+      const created = await api.createPart(token as string, {
+        price_cents: price,
         title: String(f.get("title")).trim(),
         category: String(f.get("category")) as Category,
         make: String(f.get("make")).trim(),
@@ -28,6 +35,7 @@ export default function DaPartePage() {
         description: String(f.get("description")).trim(),
         is_visible: f.get("visible") === "on",
       });
+      for (const file of files) await api.uploadPartPhoto(token as string, created.id, await resizeImage(file));
       setOpen(false);
       setError(undefined);
       parts.reload();
@@ -67,6 +75,10 @@ export default function DaPartePage() {
             <div style={{ flex: 1 }}><label htmlFor="p-cat">Categoria</label>
               <select id="p-cat" name="category">{CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}</select></div>
           </div>
+          <div className="row">
+            <div style={{ flex: 1 }}><label htmlFor="p-price">Prezzo (€)</label><input id="p-price" name="price" inputMode="decimal" placeholder="Su richiesta" /></div>
+            <div style={{ flex: 2 }}><label htmlFor="p-photos">Foto (max {MAX_PART_PHOTOS})</label><input id="p-photos" name="photos" type="file" accept="image/*" multiple /></div>
+          </div>
           <div><label htmlFor="p-desc">Descrizione</label><textarea id="p-desc" name="description" /></div>
           <label className="check"><input type="checkbox" name="visible" defaultChecked /> Visibile sulla mappa</label>
           <button className="primary">Salva</button>
@@ -77,7 +89,8 @@ export default function DaPartePage() {
         <div key={p.id} className="card stack">
           <div className="row between"><strong>{p.title}</strong>
             <button className="danger" onClick={() => void remove(p.id)} aria-label={`Elimina ${p.title}`}>✕</button></div>
-          <div className="muted">{p.make} {p.model}</div>
+          <div className="muted">{p.make} {p.model} · <strong>{formatPrice(p.price_cents)}</strong></div>
+          <PartPhotoManager part={p} token={token as string} onChange={parts.reload} />
           <label className="check"><input type="checkbox" checked={p.is_visible} onChange={(e) => void toggle(p.id, e.target.checked)} /> Visibile sulla mappa</label>
         </div>
       ))}

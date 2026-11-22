@@ -5,6 +5,8 @@ import { api } from "../api/endpoints";
 import { CATEGORIES, type Review } from "../api/types";
 import { useSession } from "../auth/session";
 import HighlightsRow from "../components/HighlightsRow";
+import { PartPhotoStrip } from "../components/PartPhotos";
+import { formatPrice } from "../lib/money";
 import ReportMenu from "../components/ReportMenu";
 import { ErrorNote, Page, Stars } from "../components/ui";
 import { useAsync } from "../lib/useAsync";
@@ -124,6 +126,8 @@ export default function PublicProfilePage() {
             <div key={x.id} className="card">
               <div className="row between"><strong>{x.title}</strong>{!isOwner ? <ReportMenu targetType="part" targetId={x.id} label="questo annuncio" /> : null}</div>
               <div className="muted">{x.make} {x.model} · {CATEGORIES.find((c) => c.value === x.category)?.label}</div>
+              <div><strong>{formatPrice(x.price_cents)}</strong></div>
+              <PartPhotoStrip part={x} />
               {x.description ? <p>{x.description}</p> : null}
             </div>
           ))}

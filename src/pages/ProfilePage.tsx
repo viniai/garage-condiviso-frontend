@@ -2,7 +2,7 @@ import { type FormEvent, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/endpoints";
 import { useSession } from "../auth/session";
-import { ErrorNote, LoginPrompt, Page, PrivacyBadge } from "../components/ui";
+import { ConsentCheck, ErrorNote, LoginPrompt, Page, PrivacyBadge } from "../components/ui";
 import { currentPosition } from "../lib/geo";
 import { db } from "../local/db";
 import { exportBackup, InvalidBackupError, parseBackup, restoreBackup } from "../local/backup";
@@ -10,6 +10,7 @@ import { exportBackup, InvalidBackupError, parseBackup, restoreBackup } from "..
 function CreateProfile() {
   const { token, refresh } = useSession();
   const [pos, setPos] = useState<{ lat: number; lon: number }>();
+  const [consent, setConsent] = useState(false);
   const [error, setError] = useState<unknown>();
 
   async function locate() {
@@ -24,6 +25,7 @@ function CreateProfile() {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!pos) return setError(new Error("Imposta la posizione (viene arrotondata al tuo comune)"));
+    if (!consent) return setError(new Error("Per creare il profilo accetta termini e informativa"));
     const f = new FormData(e.currentTarget);
     try {
       await api.createProfile(token as string, {
@@ -32,6 +34,7 @@ function CreateProfile() {
         municipality: String(f.get("municipality")).trim(),
         bio: String(f.get("bio")).trim(),
         ...pos,
+        accept_terms: true,
       });
       await refresh();
     } catch (err) {
@@ -50,8 +53,9 @@ function CreateProfile() {
         <button type="button" onClick={() => void locate()}>Usa la mia posizione</button>
         {pos ? <span className="ok">Posizione impostata (≈ 1 km)</span> : <span className="muted">Non verrà mai mostrato l'indirizzo esatto</span>}
       </div>
+      <ConsentCheck checked={consent} onChange={setConsent} />
       <ErrorNote error={error} />
-      <button className="primary">Crea profilo</button>
+      <button className="primary" disabled={!consent}>Crea profilo</button>
     </form>
   );
 }
@@ -150,6 +154,7 @@ export default function ProfilePage() {
           {confirm ? <p className="muted">Profilo, pezzi, diari pubblicati e recensioni saranno eliminati dal server. I dati locali restano in questo browser.</p> : null}
         </section>
       ) : null}
+      <p className="muted legal-note"><Link to="/privacy">Informativa privacy</Link> · <Link to="/termini">Termini d'uso</Link></p>
     </Page>
   );
 }

@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { api } from "../api/endpoints";
 import { CATEGORIES, CATEGORY_COLORS, type Part } from "../api/types";
 import { useSession } from "../auth/session";
+import { PartPhotoStrip, PartThumb } from "../components/PartPhotos";
+import { formatPrice } from "../lib/money";
 import ReportMenu from "../components/ReportMenu";
 import { ErrorNote, LoginPrompt } from "../components/ui";
 import { currentPosition, radiusFromBounds } from "../lib/geo";
@@ -178,6 +180,8 @@ export default function MapPage() {
             </div>
             <div className="muted">{selected.make} {selected.model} · {CATEGORIES.find((c) => c.value === selected.category)?.label}
               {selected.distance_km != null ? ` · ${selected.distance_km} km` : ""}</div>
+            <div><strong>{formatPrice(selected.price_cents)}</strong></div>
+            <PartPhotoStrip part={selected} />
             {selected.description ? <p>{selected.description}</p> : null}
             <p>Di <Link to={`/p/${selected.seller.handle}`}>{selected.seller.display_name}</Link>
               {selected.seller.status === "unclaimed" ? " · profilo non riscattato" : ""}</p>
@@ -189,7 +193,8 @@ export default function MapPage() {
         {list.map((p) => (
           <div key={p.id} className="card part-item row between">
             <button className="part-main" onClick={() => pickMarker(p)}>
-              <strong>{p.title}</strong>
+              <PartThumb part={p} />
+              <strong>{p.title}</strong> <span className="mono">· {formatPrice(p.price_cents)}</span>
               <div className="muted">{p.make} {p.model} · {p.seller.display_name}{p.distance_km != null ? <span className="mono"> · {p.distance_km} km</span> : ""}</div>
             </button>
             <ReportMenu targetType="part" targetId={p.id} label="questo annuncio" />

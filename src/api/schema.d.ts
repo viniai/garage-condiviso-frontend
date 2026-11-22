@@ -267,6 +267,43 @@ export interface paths {
         patch: operations["update_part_v1_parts__part_id__patch"];
         trace?: never;
     };
+    "/v1/parts/{part_id}/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Part Photo
+         * @description Max 3 foto per annuncio (409 `photo_limit_reached`). Solo il titolare o un admin.
+         */
+        post: operations["add_part_photo_v1_parts__part_id__photos_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/part-photos/{photo_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Part Photo */
+        delete: operations["delete_part_photo_v1_part_photos__photo_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/parts/{part_id}/contacts": {
         parameters: {
             query?: never;
@@ -771,6 +808,11 @@ export interface components {
              */
             caption: string;
         };
+        /** Body_add_part_photo_v1_parts__part_id__photos_post */
+        Body_add_part_photo_v1_parts__part_id__photos_post: {
+            /** File */
+            file: string;
+        };
         /** Body_add_photo_v1_entries__entry_id__photos_post */
         Body_add_photo_v1_entries__entry_id__photos_post: {
             /** File */
@@ -780,6 +822,11 @@ export interface components {
         ClaimRequest: {
             /** Token */
             token: string;
+            /**
+             * Accept Terms
+             * @constant
+             */
+            accept_terms: true;
         };
         /** ClaimTokenOut */
         ClaimTokenOut: {
@@ -971,6 +1018,29 @@ export interface components {
             is_admin: boolean;
             profile: components["schemas"]["ProfileOut"] | null;
         };
+        /** OwnProfileCreate */
+        OwnProfileCreate: {
+            /** Handle */
+            handle: string;
+            /** Display Name */
+            display_name: string;
+            /** Municipality */
+            municipality: string;
+            /** Lat */
+            lat: number;
+            /** Lon */
+            lon: number;
+            /**
+             * Bio
+             * @default
+             */
+            bio: string;
+            /**
+             * Accept Terms
+             * @constant
+             */
+            accept_terms: true;
+        };
         /** PartCreate */
         PartCreate: {
             /** Title */
@@ -997,6 +1067,8 @@ export interface components {
              * @default true
              */
             is_visible: boolean;
+            /** Price Cents */
+            price_cents?: number | null;
             /** Lat */
             lat?: number | null;
             /** Lon */
@@ -1025,12 +1097,19 @@ export interface components {
             lon: number;
             /** Is Visible */
             is_visible: boolean;
+            /** Price Cents */
+            price_cents?: number | null;
             /**
              * Created At
              * Format: date-time
              */
             created_at: string;
             seller: components["schemas"]["SellerRef"];
+            /**
+             * Photos
+             * @default []
+             */
+            photos: components["schemas"]["PhotoOut"][];
             /** Distance Km */
             distance_km?: number | null;
         };
@@ -1048,6 +1127,8 @@ export interface components {
             description?: string | null;
             /** Is Visible */
             is_visible?: boolean | null;
+            /** Price Cents */
+            price_cents?: number | null;
             /** Lat */
             lat?: number | null;
             /** Lon */
@@ -1066,24 +1147,6 @@ export interface components {
             width: number;
             /** Height */
             height: number;
-        };
-        /** ProfileCreate */
-        ProfileCreate: {
-            /** Handle */
-            handle: string;
-            /** Display Name */
-            display_name: string;
-            /** Municipality */
-            municipality: string;
-            /** Lat */
-            lat: number;
-            /** Lon */
-            lon: number;
-            /**
-             * Bio
-             * @default
-             */
-            bio: string;
         };
         /** ProfileOut */
         ProfileOut: {
@@ -1159,8 +1222,12 @@ export interface components {
         PublicConfig: {
             /** Max Vehicles Per User */
             max_vehicles_per_user: number;
+            /** Terms Version */
+            terms_version: string;
             /** Max Photos Per Vehicle */
             max_photos_per_vehicle: number;
+            /** Max Photos Per Part */
+            max_photos_per_part: number;
             /** Max Highlights Per Profile */
             max_highlights_per_profile: number;
             /** Max Items Per Highlight */
@@ -1560,7 +1627,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ProfileCreate"];
+                "application/json": components["schemas"]["OwnProfileCreate"];
             };
         };
         responses: {
@@ -1886,6 +1953,70 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PartOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_part_photo_v1_parts__part_id__photos_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                part_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_add_part_photo_v1_parts__part_id__photos_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_part_photo_v1_part_photos__photo_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                photo_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

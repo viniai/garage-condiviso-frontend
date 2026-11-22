@@ -230,7 +230,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProfileCreate"
+                "$ref": "#/components/schemas/OwnProfileCreate"
               }
             }
           },
@@ -806,6 +806,106 @@
               "type": "string",
               "format": "uuid",
               "title": "Part Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/parts/{part_id}/photos": {
+      "post": {
+        "tags": [
+          "pezzi"
+        ],
+        "summary": "Add Part Photo",
+        "description": "Max 3 foto per annuncio (409 `photo_limit_reached`). Solo il titolare o un admin.",
+        "operationId": "add_part_photo_v1_parts__part_id__photos_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "part_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Part Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_add_part_photo_v1_parts__part_id__photos_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/part-photos/{photo_id}": {
+      "delete": {
+        "tags": [
+          "pezzi"
+        ],
+        "summary": "Delete Part Photo",
+        "operationId": "delete_part_photo_v1_part_photos__photo_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "photo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Photo Id"
             }
           }
         ],
@@ -2363,6 +2463,20 @@
         ],
         "title": "Body_add_highlight_item_v1_highlights__highlight_id__items_post"
       },
+      "Body_add_part_photo_v1_parts__part_id__photos_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_add_part_photo_v1_parts__part_id__photos_post"
+      },
       "Body_add_photo_v1_entries__entry_id__photos_post": {
         "properties": {
           "file": {
@@ -2384,11 +2498,17 @@
             "maxLength": 200,
             "minLength": 10,
             "title": "Token"
+          },
+          "accept_terms": {
+            "type": "boolean",
+            "const": true,
+            "title": "Accept Terms"
           }
         },
         "type": "object",
         "required": [
-          "token"
+          "token",
+          "accept_terms"
         ],
         "title": "ClaimRequest"
       },
@@ -2790,6 +2910,61 @@
         ],
         "title": "MeOut"
       },
+      "OwnProfileCreate": {
+        "properties": {
+          "handle": {
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 3,
+            "title": "Handle"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Display Name"
+          },
+          "municipality": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Municipality"
+          },
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon"
+          },
+          "bio": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Bio",
+            "default": ""
+          },
+          "accept_terms": {
+            "type": "boolean",
+            "const": true,
+            "title": "Accept Terms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "handle",
+          "display_name",
+          "municipality",
+          "lat",
+          "lon",
+          "accept_terms"
+        ],
+        "title": "OwnProfileCreate"
+      },
       "PartCreate": {
         "properties": {
           "title": {
@@ -2831,6 +3006,19 @@
             "type": "boolean",
             "title": "Is Visible",
             "default": true
+          },
+          "price_cents": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Cents"
           },
           "lat": {
             "anyOf": [
@@ -2906,6 +3094,17 @@
             "type": "boolean",
             "title": "Is Visible"
           },
+          "price_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Cents"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -2913,6 +3112,14 @@
           },
           "seller": {
             "$ref": "#/components/schemas/SellerRef"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoOut"
+            },
+            "type": "array",
+            "title": "Photos",
+            "default": []
           },
           "distance_km": {
             "anyOf": [
@@ -3023,6 +3230,19 @@
             ],
             "title": "Is Visible"
           },
+          "price_cents": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Cents"
+          },
           "lat": {
             "anyOf": [
               {
@@ -3081,55 +3301,6 @@
           "height"
         ],
         "title": "PhotoOut"
-      },
-      "ProfileCreate": {
-        "properties": {
-          "handle": {
-            "type": "string",
-            "maxLength": 30,
-            "minLength": 3,
-            "title": "Handle"
-          },
-          "display_name": {
-            "type": "string",
-            "maxLength": 80,
-            "minLength": 1,
-            "title": "Display Name"
-          },
-          "municipality": {
-            "type": "string",
-            "maxLength": 80,
-            "minLength": 1,
-            "title": "Municipality"
-          },
-          "lat": {
-            "type": "number",
-            "maximum": 90.0,
-            "minimum": -90.0,
-            "title": "Lat"
-          },
-          "lon": {
-            "type": "number",
-            "maximum": 180.0,
-            "minimum": -180.0,
-            "title": "Lon"
-          },
-          "bio": {
-            "type": "string",
-            "maxLength": 500,
-            "title": "Bio",
-            "default": ""
-          }
-        },
-        "type": "object",
-        "required": [
-          "handle",
-          "display_name",
-          "municipality",
-          "lat",
-          "lon"
-        ],
-        "title": "ProfileCreate"
       },
       "ProfileOut": {
         "properties": {
@@ -3329,9 +3500,17 @@
             "type": "integer",
             "title": "Max Vehicles Per User"
           },
+          "terms_version": {
+            "type": "string",
+            "title": "Terms Version"
+          },
           "max_photos_per_vehicle": {
             "type": "integer",
             "title": "Max Photos Per Vehicle"
+          },
+          "max_photos_per_part": {
+            "type": "integer",
+            "title": "Max Photos Per Part"
           },
           "max_highlights_per_profile": {
             "type": "integer",
@@ -3360,7 +3539,9 @@
         "type": "object",
         "required": [
           "max_vehicles_per_user",
+          "terms_version",
           "max_photos_per_vehicle",
+          "max_photos_per_part",
           "max_highlights_per_profile",
           "max_items_per_highlight",
           "reviews_on_unclaimed"
