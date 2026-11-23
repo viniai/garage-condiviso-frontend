@@ -48,3 +48,26 @@ describe("ReportMenu", () => {
     expect(await screen.findByText(/abbiamo ricevuto la segnalazione/)).toBeTruthy();
   });
 });
+
+describe("ReportMenu sui propri contenuti", () => {
+  it("mostra Modifica ed Elimina al posto di Segnala", () => {
+    const onDelete = vi.fn();
+    render(
+      <SessionProvider>
+        <MemoryRouter>
+          <ReportMenu
+            targetType="part"
+            targetId="p1"
+            ownerActions={[{ label: "Modifica", to: "/da-parte?modifica=p1" }, { label: "Elimina", danger: true, onClick: onDelete }]}
+          />
+        </MemoryRouter>
+      </SessionProvider>,
+    );
+    fireEvent.click(screen.getByLabelText("Altre azioni"));
+    expect(screen.queryByRole("menuitem", { name: "Segnala" })).toBeNull();
+    expect(screen.getByRole("menuitem", { name: "Modifica" }).getAttribute("href")).toBe("/da-parte?modifica=p1");
+    fireEvent.click(screen.getByRole("menuitem", { name: "Elimina" }));
+    expect(onDelete).toHaveBeenCalledOnce();
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+});

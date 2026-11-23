@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { mediaUrl } from "../api/client";
 import { api } from "../api/endpoints";
 import { CATEGORIES, type Review } from "../api/types";
@@ -97,7 +97,8 @@ function ReviewItem({ review, isOwner, onChange }: { review: Review; isOwner: bo
 export default function PublicProfilePage() {
   const { handle = "" } = useParams();
   const { me } = useSession();
-  const [tab, setTab] = useState<Tab>("showcase");
+  const [params] = useSearchParams();
+  const [tab, setTab] = useState<Tab>(params.get("tab") === "diari" ? "diaries" : "showcase");
   const profile = useAsync(() => api.getProfile(handle), [handle]);
   const parts = useAsync(() => api.profileParts(handle), [handle]);
   const reviews = useAsync(() => api.reviews(handle), [handle]);
@@ -124,7 +125,7 @@ export default function PublicProfilePage() {
         <>
           {(parts.data ?? []).map((x) => (
             <div key={x.id} className="card">
-              <div className="row between"><strong>{x.title}</strong>{!isOwner ? <ReportMenu targetType="part" targetId={x.id} label="questo annuncio" /> : null}</div>
+              <div className="row between"><strong>{x.title}</strong><ReportMenu targetType="part" targetId={x.id} label="questo annuncio" ownerActions={isOwner ? [{ label: "Modifica", to: `/da-parte?modifica=${x.id}` }] : undefined} /></div>
               <div className="muted">{x.make} {x.model} · {CATEGORIES.find((c) => c.value === x.category)?.label}</div>
               <div><strong>{formatPrice(x.price_cents)}</strong></div>
               <PartPhotoStrip part={x} />

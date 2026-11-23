@@ -6,6 +6,14 @@ import { ErrorNote } from "./ui";
 
 export type ReportTarget = "profile" | "part" | "review" | "entry";
 
+/** Azione del titolare (Modifica, Elimina…): al posto di "Segnala" sui propri contenuti. */
+export interface OwnerAction {
+  label: string;
+  to?: string;
+  onClick?: () => void;
+  danger?: boolean;
+}
+
 const REASONS = [
   ["spam", "Spam o pubblicità"],
   ["illegal", "Pezzo rubato, contraffatto o illegale"],
@@ -14,8 +22,11 @@ const REASONS = [
   ["other", "Altro"],
 ] as const;
 
-/** Menu a tre puntini con la voce "Segnala" per annunci, profili, diari e recensioni. */
-export default function ReportMenu({ targetType, targetId, label = "contenuto" }: { targetType: ReportTarget; targetId: string; label?: string }) {
+/**
+ * Menu a tre puntini. Sui contenuti altrui ha la voce "Segnala"; sui propri (`ownerActions`)
+ * ha Modifica/Elimina, perché non ha senso segnalare sé stessi.
+ */
+export default function ReportMenu({ targetType, targetId, label = "contenuto", ownerActions }: { targetType: ReportTarget; targetId: string; label?: string; ownerActions?: OwnerAction[] }) {
   const { token } = useSession();
   const [menu, setMenu] = useState(false);
   const [dialog, setDialog] = useState(false);
@@ -63,7 +74,13 @@ export default function ReportMenu({ targetType, targetId, label = "contenuto" }
       <button className="kebab-btn" aria-label="Altre azioni" aria-haspopup="menu" aria-expanded={menu} onClick={() => setMenu((v) => !v)}>⋯</button>
       {menu ? (
         <div className="kebab-menu" role="menu">
-          <button role="menuitem" onClick={() => { setMenu(false); setDialog(true); }}>Segnala</button>
+          {ownerActions ? ownerActions.map((a) => a.to ? (
+            <Link key={a.label} role="menuitem" className="kebab-item" to={a.to} onClick={() => setMenu(false)}>{a.label}</Link>
+          ) : (
+            <button key={a.label} role="menuitem" className={a.danger ? "danger" : undefined} onClick={() => { setMenu(false); a.onClick?.(); }}>{a.label}</button>
+          )) : (
+            <button role="menuitem" onClick={() => { setMenu(false); setDialog(true); }}>Segnala</button>
+          )}
         </div>
       ) : null}
       {dialog ? (

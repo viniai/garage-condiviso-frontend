@@ -338,6 +338,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/map/diaries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Map Diaries
+         * @description Diari mostrati sulla mappa. Posizione = centro del comune + spostamento fisso di 1-3 km.
+         */
+        get: operations["map_diaries_v1_map_diaries_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/vehicles": {
         parameters: {
             query?: never;
@@ -431,6 +451,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/vehicles/{vehicle_id}/entries/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List All Entries
+         * @description Tutte le voci, anche quelle fuori dal feed. Solo il titolare o un admin.
+         */
+        get: operations["list_all_entries_v1_vehicles__vehicle_id__entries_all_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/entries/{entry_id}": {
         parameters: {
             query?: never;
@@ -443,6 +483,24 @@ export interface paths {
         post?: never;
         /** Delete Entry */
         delete: operations["delete_entry_v1_entries__entry_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Entry */
+        patch: operations["update_entry_v1_entries__entry_id__patch"];
+        trace?: never;
+    };
+    "/v1/entry-photos/{photo_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Entry Photo */
+        delete: operations["delete_entry_photo_v1_entry_photos__photo_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -916,6 +974,19 @@ export interface components {
             /** Photos */
             photos: components["schemas"]["PhotoOut"][];
         };
+        /** EntryUpdate */
+        EntryUpdate: {
+            /** Title */
+            title?: string | null;
+            /** Body */
+            body?: string | null;
+            /** Phase */
+            phase?: string | null;
+            /** Occurred On */
+            occurred_on?: string | null;
+            /** Show In Feed */
+            show_in_feed?: boolean | null;
+        };
         /** ForwardingItemOut */
         ForwardingItemOut: {
             /**
@@ -1001,6 +1072,39 @@ export interface components {
              * Format: email
              */
             email: string;
+        };
+        /**
+         * MapDiaryOut
+         * @description Pin di un diario sulla mappa: posizione generica (comune + 1-3 km), mai quella reale.
+         */
+        MapDiaryOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Title */
+            title: string;
+            /** Make */
+            make: string;
+            /** Model */
+            model: string;
+            /** Year */
+            year: number;
+            /** Lat */
+            lat: number;
+            /** Lon */
+            lon: number;
+            /** Distance Km */
+            distance_km?: number | null;
+            /** Entries Count */
+            entries_count: number;
+            /** Last Entry Title */
+            last_entry_title?: string | null;
+            /** Last Entry On */
+            last_entry_on?: string | null;
+            cover?: components["schemas"]["PhotoOut"] | null;
+            owner: components["schemas"]["SellerRef"];
         };
         /** MeOut */
         MeOut: {
@@ -1394,6 +1498,11 @@ export interface components {
              * @default true
              */
             is_public: boolean;
+            /**
+             * Show On Map
+             * @default false
+             */
+            show_on_map: boolean;
         };
         /** VehicleOut */
         VehicleOut: {
@@ -1412,6 +1521,8 @@ export interface components {
             title: string;
             /** Is Public */
             is_public: boolean;
+            /** Show On Map */
+            show_on_map: boolean;
             /**
              * Created At
              * Format: date-time
@@ -1420,10 +1531,18 @@ export interface components {
         };
         /** VehicleUpdate */
         VehicleUpdate: {
+            /** Make */
+            make?: string | null;
+            /** Model */
+            model?: string | null;
+            /** Year */
+            year?: number | null;
             /** Title */
             title?: string | null;
             /** Is Public */
             is_public?: boolean | null;
+            /** Show On Map */
+            show_on_map?: boolean | null;
         };
         /** VerifyRequest */
         VerifyRequest: {
@@ -2084,6 +2203,42 @@ export interface operations {
             };
         };
     };
+    map_diaries_v1_map_diaries_get: {
+        parameters: {
+            query?: {
+                lat?: number | null;
+                lon?: number | null;
+                radius_km?: number | null;
+                make?: string | null;
+                q?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MapDiaryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     create_vehicle_v1_vehicles_post: {
         parameters: {
             query?: never;
@@ -2298,12 +2453,107 @@ export interface operations {
             };
         };
     };
+    list_all_entries_v1_vehicles__vehicle_id__entries_all_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vehicle_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     delete_entry_v1_entries__entry_id__delete: {
         parameters: {
             query?: never;
             header?: never;
             path: {
                 entry_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_entry_v1_entries__entry_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entry_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EntryUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_entry_photo_v1_entry_photos__photo_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                photo_id: string;
             };
             cookie?: never;
         };

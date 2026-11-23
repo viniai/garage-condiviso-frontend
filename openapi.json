@@ -1014,6 +1014,144 @@
         ]
       }
     },
+    "/v1/map/diaries": {
+      "get": {
+        "tags": [
+          "diari"
+        ],
+        "summary": "Map Diaries",
+        "description": "Diari mostrati sulla mappa. Posizione = centro del comune + spostamento fisso di 1-3 km.",
+        "operationId": "map_diaries_v1_map_diaries_get",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 90,
+                  "minimum": -90
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lat"
+            }
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 180,
+                  "minimum": -180
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lon"
+            }
+          },
+          {
+            "name": "radius_km",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 500,
+                  "exclusiveMinimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Radius Km"
+            }
+          },
+          {
+            "name": "make",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Make"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MapDiaryOut"
+                  },
+                  "title": "Response Map Diaries V1 Map Diaries Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/vehicles": {
       "post": {
         "tags": [
@@ -1338,7 +1476,116 @@
         }
       }
     },
+    "/v1/vehicles/{vehicle_id}/entries/all": {
+      "get": {
+        "tags": [
+          "diari"
+        ],
+        "summary": "List All Entries",
+        "description": "Tutte le voci, anche quelle fuori dal feed. Solo il titolare o un admin.",
+        "operationId": "list_all_entries_v1_vehicles__vehicle_id__entries_all_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Vehicle Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntryOut"
+                  },
+                  "title": "Response List All Entries V1 Vehicles  Vehicle Id  Entries All Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/entries/{entry_id}": {
+      "patch": {
+        "tags": [
+          "diari"
+        ],
+        "summary": "Update Entry",
+        "operationId": "update_entry_v1_entries__entry_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Entry Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntryUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "diari"
@@ -1359,6 +1606,47 @@
               "type": "string",
               "format": "uuid",
               "title": "Entry Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/entry-photos/{photo_id}": {
+      "delete": {
+        "tags": [
+          "diari"
+        ],
+        "summary": "Delete Entry Photo",
+        "operationId": "delete_entry_photo_v1_entry_photos__photo_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "photo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Photo Id"
             }
           }
         ],
@@ -2669,6 +2957,72 @@
         ],
         "title": "EntryOut"
       },
+      "EntryUpdate": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "body": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body"
+          },
+          "phase": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phase"
+          },
+          "occurred_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurred On"
+          },
+          "show_in_feed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Show In Feed"
+          }
+        },
+        "type": "object",
+        "title": "EntryUpdate"
+      },
       "ForwardingItemOut": {
         "properties": {
           "id": {
@@ -2873,6 +3227,104 @@
           "email"
         ],
         "title": "MagicLinkRequest"
+      },
+      "MapDiaryOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "make": {
+            "type": "string",
+            "title": "Make"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "year": {
+            "type": "integer",
+            "title": "Year"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "title": "Lon"
+          },
+          "distance_km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance Km"
+          },
+          "entries_count": {
+            "type": "integer",
+            "title": "Entries Count"
+          },
+          "last_entry_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Entry Title"
+          },
+          "last_entry_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Entry On"
+          },
+          "cover": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhotoOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "$ref": "#/components/schemas/SellerRef"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "make",
+          "model",
+          "year",
+          "lat",
+          "lon",
+          "entries_count",
+          "owner"
+        ],
+        "title": "MapDiaryOut",
+        "description": "Pin di un diario sulla mappa: posizione generica (comune + 1-3 km), mai quella reale."
       },
       "MeOut": {
         "properties": {
@@ -3891,6 +4343,11 @@
             "type": "boolean",
             "title": "Is Public",
             "default": true
+          },
+          "show_on_map": {
+            "type": "boolean",
+            "title": "Show On Map",
+            "default": false
           }
         },
         "type": "object",
@@ -3929,6 +4386,10 @@
             "type": "boolean",
             "title": "Is Public"
           },
+          "show_on_map": {
+            "type": "boolean",
+            "title": "Show On Map"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -3943,12 +4404,52 @@
           "year",
           "title",
           "is_public",
+          "show_on_map",
           "created_at"
         ],
         "title": "VehicleOut"
       },
       "VehicleUpdate": {
         "properties": {
+          "make": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Make"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 60,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2100.0,
+                "minimum": 1885.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          },
           "title": {
             "anyOf": [
               {
@@ -3972,6 +4473,17 @@
               }
             ],
             "title": "Is Public"
+          },
+          "show_on_map": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Show On Map"
           }
         },
         "type": "object",

@@ -17,3 +17,10 @@ export function parsePrice(input: string): number | null | undefined {
   if (!/^\d{1,6}([.,]\d{1,2})?$/.test(text)) return undefined;
   return Math.round(Number(text.replace(",", ".")) * 100);
 }
+
+/** Centesimi → testo per il campo di modifica ("120", "85,50"); assente → vuoto. */
+export function priceToInput(cents: number | null | undefined): string {
+  if (cents == null) return "";
+  const euros = cents / 100;
+  return Number.isInteger(euros) ? String(euros) : euros.toFixed(2).replace(".", ",");
+}

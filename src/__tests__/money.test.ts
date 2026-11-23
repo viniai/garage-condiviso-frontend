@@ -16,3 +16,14 @@ describe("prezzi", () => {
     expect(parsePrice("-5")).toBeUndefined();
   });
 });
+
+import { priceToInput } from "../lib/money";
+
+describe("priceToInput", () => {
+  it("riporta i centesimi nel campo di modifica", () => {
+    expect(priceToInput(12000)).toBe("120");
+    expect(priceToInput(8550)).toBe("85,50");
+    expect(priceToInput(null)).toBe("");
+    expect(priceToInput(undefined)).toBe("");
+  });
+});

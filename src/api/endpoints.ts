@@ -1,9 +1,11 @@
 import { request } from "./client";
 import type {
   DiaryEntry,
+  EntryUpdate,
   ForwardingItem,
   Highlight,
   HighlightItem,
+  MapDiary,
   Me,
   Part,
   PartCreate,
@@ -14,6 +16,7 @@ import type {
   Review,
   ReviewList,
   Vehicle,
+  VehicleUpdate,
 } from "./types";
 
 /** Tutte le chiamate al backend. Il token è passato esplicitamente (niente stato globale nascosto). */
@@ -63,10 +66,20 @@ export const api = {
   myVehicles: (token: string) => request<Vehicle[]>("GET", "/v1/vehicles/mine", { token }),
   createVehicle: (
     token: string,
-    body: { make: string; model: string; year: number; title: string; is_public?: boolean },
+    body: { make: string; model: string; year: number; title: string; is_public?: boolean; show_on_map?: boolean },
   ) => request<Vehicle>("POST", "/v1/vehicles", { token, json: body }),
+  updateVehicle: (token: string, id: string, body: VehicleUpdate) =>
+    request<Vehicle>("PATCH", `/v1/vehicles/${id}`, { token, json: body }),
+  mapDiaries: (query: { lat?: number; lon?: number; radius_km?: number; make?: string; q?: string }) =>
+    request<MapDiary[]>("GET", "/v1/map/diaries", { query }),
   deleteVehicle: (token: string, id: string) => request<void>("DELETE", `/v1/vehicles/${id}`, { token }),
   vehicleEntries: (id: string) => request<DiaryEntry[]>("GET", `/v1/vehicles/${id}/entries`),
+  allEntries: (token: string, id: string) =>
+    request<DiaryEntry[]>("GET", `/v1/vehicles/${id}/entries/all`, { token }),
+  updateEntry: (token: string, id: string, body: EntryUpdate) =>
+    request<DiaryEntry>("PATCH", `/v1/entries/${id}`, { token, json: body }),
+  deleteEntry: (token: string, id: string) => request<void>("DELETE", `/v1/entries/${id}`, { token }),
+  deleteEntryPhoto: (token: string, id: string) => request<void>("DELETE", `/v1/entry-photos/${id}`, { token }),
   addEntry: (
     token: string,
     vehicleId: string,

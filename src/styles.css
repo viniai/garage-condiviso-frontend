@@ -154,6 +154,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .kebab { position: relative; display: inline-block; }
 .kebab-btn { border: 0; background: none; font-size: 1.4rem; line-height: 1; padding: 4px 8px; color: var(--muted); }
 .kebab-menu { position: absolute; right: 0; top: 100%; z-index: 600; min-width: 140px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 4px; }
+.kebab-item { display: block; padding: 8px 10px; color: var(--ink); text-decoration: none; border-radius: 8px; }
 .kebab-menu button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 8px 10px; }
 .modal-back { position: fixed; inset: 0; z-index: 3000; background: rgb(0 0 0 / 50%); display: flex; align-items: center; justify-content: center; padding: 16px; }
 .modal { width: 100%; max-width: 420px; margin: 0; }
@@ -168,3 +169,13 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .part-photo-edit button { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; padding: 0; border-radius: 50%; line-height: 1; }
 .part-photo-add { height: 96px; min-width: 80px; border: 2px dashed var(--line); background: none; border-radius: 10px; flex: none; }
 .part-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; float: left; margin-right: 10px; }
+
+/* Interruttore Pezzi | Diari sulla mappa */
+.view-switch { display: inline-flex; background: var(--ink); border-radius: 999px; padding: 3px; box-shadow: var(--shadow); justify-self: start; }
+.view-switch button { border: 0; background: none; color: var(--bg); border-radius: 999px; padding: 6px 16px; font-family: var(--font-head, inherit); letter-spacing: .04em; text-transform: uppercase; font-size: .78rem; }
+.view-switch button[aria-pressed="true"] { background: var(--ocra); color: var(--ink); font-weight: 700; }
+.diary-cover { width: 100%; max-height: 180px; object-fit: cover; border-radius: 10px; }
+.approx { font-size: .82rem; }
+.tag { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; font-size: .72rem; color: var(--muted); }
+.photo-edit { position: relative; display: inline-block; }
+.photo-edit button { position: absolute; top: 4px; right: 4px; padding: 2px 8px; }
